@@ -135,6 +135,22 @@ def guality_control(x,y, X_test, y_test, predictions, logreg):
 def main():
     data = pd.read_csv(DATA_FILE)
     x, y = preprocessing_data(data)
+
+    # I check where there are NaN values
+    data.isnull().any()
+    data = data.fillna(' ')
+    #data['Position'] = data['Position'].apply(lambda x: 1 if x.endswith('B') else 0)
+    data = data.astype(str).apply(preprocessing.LabelEncoder().fit_transform)
+    # Correlation heatmap
+    plt.rcParams['figure.figsize']=(16,16)
+    hm=sns.heatmap(data[[ 'Potential', 'Value', 'Wage',
+                'Acceleration', 'Aggression', 'Agility', 'Balance', 'BallControl', 
+                'Body Type','Composure', 'Crossing','Dribbling', 'FKAccuracy', 'Finishing', 
+                'HeadingAccuracy', 'Interceptions','International Reputation',
+                'Joined', 'Jumping', 'LongPassing', 'LongShots',
+                 'Penalties', 'Position']].corr(), annot = True, linewidths=.5, cmap='Blues')
+    hm.set_title(label='Heatmap of dataset', fontsize=20)
+    plt.show(hm);
     X_train, X_test, y_train, y_test = train_test_split(x, y,test_size=0.2)
     logreg = LogisticRegression(verbose=1)
     logreg.fit(X_train, y_train)
